@@ -4,7 +4,7 @@ from datetime import datetime
 
 from safepath import get_waypoints
 
-gmaps = googlemaps.Client(key='your client key')
+gmaps = googlemaps.Client(key='AIzaSyDCXWvoPjy1rtQVJ5AqQBC2y8tGQQwOnas')
 
 
 def decode_polyline(dr):
