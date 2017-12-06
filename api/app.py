@@ -23,7 +23,8 @@ pts = np.asarray(list(zip(full["Lat"], full["Lon"])))
 @app.route('/')
 def hello():
     mymap = Map(
-        identifier="main-map",
+        identifier="plinemap",
+        style = "height:90%;width:100%;",
         lat=37.871853,
         lng=-122.258423,
     )
@@ -33,27 +34,41 @@ def hello():
 def pathing():
     start = request.form["start"]
     dest = request.form["dest"]
-    path, waypoints = compute_path(start, dest) #List of tuples of (longitudes, lats)
+    path, waypoint = compute_path(start, dest) #List of tuples of (longitudes, lats)
 
     points = []
+    waypoints = []
+
     for point in path:
         point_dict = {"lat":point[0], "lng":point[1]}
         points.append(point_dict)
 
-    polyline = {
-        'stroke_color': '#0AB0DE',
+    for point in waypoint:
+        point_dict = {"lat":point[0], "lng":point[1]}
+        waypoints.append(point_dict)
+
+    polyline_points = {
+        'stroke_color': '#B62F00',
         'stroke_opacity': 1.0,
         'stroke_weight': 3,
         'path': points
     }
 
+    polyline_waypath = {
+        'stroke_color': '#09B600',
+        'stroke_opacity': 1.0,
+        'stroke_weight': 3,
+        'path': waypoints
+    }
+
     plinemap = Map(
         identifier="plinemap",
         varname="plinemap",
-        lat=37.8702804,
-        lng=-122.3212382,
-        polylines=[polyline]
-        )
+        lat=37.871853,
+        lng=-122.258423,
+        style = "height:90%;width:100%;",
+        polylines=[polyline_points, polyline_waypath]
+    )
 
     return render_template("index.html", plinemap=plinemap)
 

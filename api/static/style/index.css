@@ -5,10 +5,15 @@ body {
 }
 
 #fullpage {
-	height: 100vh;
+	height: 100%;
 }
 
-#main-map{ 
+form#submit-form {
+	text-align: center;
+	margin-top: 55%;
+}
+
+#plinemap{ 
 	height:80%;
 	width:80%;
 	top:0;
