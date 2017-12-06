@@ -1,5 +1,5 @@
-import polyline
 import googlemaps
+import polyline
 from datetime import datetime
 
 from safepath import get_waypoints
@@ -8,9 +8,7 @@ gmaps = googlemaps.Client(key='AIzaSyDCXWvoPjy1rtQVJ5AqQBC2y8tGQQwOnas')
 
 
 def decode_polyline(dr):
-    steps = dr['legs'][0]['steps']
-    for i in range(len(steps)):
-        steps[i]['polyline'] = polyline.decode(steps[i]['polyline']['points'])
+    return polyline.decode(dr['overview_polyline']['points'])
 
 def geocode(addr):
     res = gmaps.geocode(addr)[0]['geometry']['location']
@@ -18,7 +16,7 @@ def geocode(addr):
 
 # waypoints: a single location, or a list of locations
 # optimize_waypoints: let google reorder waypoints
-def googleDirection(src, dst, optimize_waypoints=True):
+def googleDirection(src, dst):
     src_addr = src
     dst_addr = dst
 
@@ -41,35 +39,15 @@ def googleDirection(src, dst, optimize_waypoints=True):
     directions = gmaps.directions(src_addr,
                                   dst_addr,
                                   mode='walking',
-                                  departure_time=now,
                                   waypoints=out,
-                                  optimize_waypoints=optimize_waypoints)
+                                  departure_time=now)
     
     return directions
-    
-def select_coords(dr):
-    coords = []
-    indices = []
-    steps = dr['legs'][0]['steps']
-    
-    idx = 0
-    for i in range(len(steps)):
-        coords += steps[i]['polyline']
-        idx += len(steps[i]['polyline'])
-        indices.append(idx)
-    
-    # store original index
-    return coords, indices
 
-def compute_path(src, dst, waypoints=True):
-    directions = googleDirection(src, dst, waypoints)
+def compute_path(src, dst):
+    directions = googleDirection(src, dst)
     dr = directions[0]
-    decode_polyline(dr)
-    coords, indices = select_coords(dr)
-    return coords
+    return decode_polyline(dr)
 
 if __name__ == '__main__':
-    directions = googleDirection("Hillegaas Avenue, Berkeley, CA", "Soda Hall, Berkeley, CA")
-    dr = directions[0]
-    decode_polyline(dr)
-    coords, indices = select_coords(dr)
+    print(compute_path("Hillegaas Avenue, Berkeley, CA", "Soda Hall, Berkeley, CA"))

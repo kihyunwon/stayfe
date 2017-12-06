@@ -29,7 +29,7 @@ def get_crime_data(bbox):
     query = df.loc[(df['Lon']>bbox[0]) & (df['Lat']>bbox[1]) & (df['Lon']<bbox[2]) & (df['Lat']<bbox[3])]
     DT = pd.to_datetime(query['Time'])
     now = pd.to_datetime('now')
-    query['secsago'] = get_time_diff(now, DT)
+    query = query.assign(secsago = get_time_diff(now, DT))
     
     def get_width(cat):
     	if "gun" or "bomb" in cat:
@@ -39,7 +39,7 @@ def get_crime_data(bbox):
     
     coords = np.array(query[['Lon', 'Lat']])
     coords = np.expand_dims(coords.T, axis=1)
-    amps = np.exp(-query['secsago']/10000000.).reshape((1, coords.shape[-1]))
+    amps = np.exp(-query['secsago']/100000.).reshape((1, coords.shape[-1]))
     widths = np.array([get_width(cat) for cat in query['Weapon']]).reshape(1,1, coords.shape[-1])
     
     return coords, amps, widths
@@ -121,12 +121,12 @@ def get_waypoints(A,B):
             s = int(np.mean([i for i, x in enumerate(label) if x == n]))
             start = arr[:,s,0] # shape (2,)
             dU = get_deriv(start.reshape((2,1)), coords.squeeze(), widths.squeeze(), amps.squeeze())
-            start -= dU*0.0000001
+            start -= dU*0.0000005
             c = 0
 
-            while (c<20 and get_weights(start.reshape((2,1,1)), coords, widths, amps)>threshold*0.5):
-                c+=1
-                start -= dU*0.000005
+            while (c < 20 and get_weights(start.reshape((2,1,1)), coords, widths, amps) > threshold * 0.5):
+                c += 1
+                start -= dU*0.00000005
                 dU = get_deriv(start.reshape((2,1)), coords.squeeze(), widths.squeeze(), amps.squeeze())
             
             u = float(s)/10
@@ -134,7 +134,7 @@ def get_waypoints(A,B):
         
         it += 1
         
-        if it >4:
+        if it > 4:
             break
         
     return waypoints

@@ -35,7 +35,6 @@ def pathing():
     dest = request.form["dest"]
     path = compute_path(start, dest) #List of tuples of (longitudes, lats)
 
-    print(path)
     points = []
     for point in path:
         point_dict = {"lat":point[0], "lng":point[1]}
@@ -55,7 +54,7 @@ def pathing():
         lng=-122.3212382,
         polylines=[polyline]
         )
-    print(points)
+
     return render_template("index.html", plinemap=plinemap)
 
 # e.g. host:port/crimes?src=-122.445,37.74&dst=-122.42,37.715
