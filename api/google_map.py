@@ -9,14 +9,7 @@ gmaps = googlemaps.Client(key='AIzaSyDCXWvoPjy1rtQVJ5AqQBC2y8tGQQwOnas')
 
 def decode_polyline(dr):
     path = polyline.decode(dr['overview_polyline']['points'])
-    waypoints = []
-    for leg in dr['legs']:
-        for point in leg['steps']:
-            start = point['start_location']
-            end = point['end_location']
-            waypoints.append((start['lat'], start['lng']))
-            waypoints.append((end['lat'], end['lng']))
-    return path, waypoints
+    return path
 
 def geocode(addr):
     res = gmaps.geocode(addr)[0]['geometry']['location']
@@ -24,7 +17,17 @@ def geocode(addr):
 
 # waypoints: a single location, or a list of locations
 # optimize_waypoints: let google reorder waypoints
-def googleDirection(src, dst):
+def googleDirection(src, dst, wypoints=None):
+    now = datetime.now()
+    directions = gmaps.directions(src,
+                                  dst,
+                                  mode='walking',
+                                  waypoints=wypoints,
+                                  departure_time=now)
+    
+    return directions
+
+def compute_path(src, dst):
     src_addr = src
     dst_addr = dst
 
@@ -43,19 +46,13 @@ def googleDirection(src, dst):
         out.append(tuple(reversed(ways[k])))
     out = out[1:-1]
 
-    now = datetime.now()
-    directions = gmaps.directions(src_addr,
-                                  dst_addr,
-                                  mode='walking',
-                                  waypoints=out,
-                                  departure_time=now)
+    path = googleDirection(src, dst)
+    p = path[0]
+    path = decode_polyline(p)
+    waypoints = googleDirection(src, dst, out)
+    w = waypoints[0]
+    waypoints = decode_polyline(w)
     
-    return directions
-
-def compute_path(src, dst):
-    directions = googleDirection(src, dst)
-    dr = directions[0]
-    path, waypoints = decode_polyline(dr)
     return path, waypoints
 
 if __name__ == '__main__':
