@@ -39,31 +39,31 @@ def pathing():
 
     start = request.form["start"]
     dest = request.form["dest"]
-    path, waypoint = compute_path(start, dest) #List of tuples of (longitudes, lats)
+    shortest_path, safest_path = compute_path(start, dest) #List of tuples of (longitudes, lats)
 
-    points = []
-    waypoints = []
+    shortest = []
+    safest = []
 
-    for point in path:
+    for point in shortest_path:
         point_dict = {"lat":point[0], "lng":point[1]}
-        points.append(point_dict)
+        shortest.append(point_dict)
 
-    for point in waypoint:
+    for point in safest_path:
         point_dict = {"lat":point[0], "lng":point[1]}
-        waypoints.append(point_dict)
+        safest.append(point_dict)
 
     polyline_points = {
         'stroke_color': '#B62F00',
         'stroke_opacity': 1.0,
         'stroke_weight': 3,
-        'path': points
+        'path': shortest
     }
 
     polyline_waypath = {
         'stroke_color': '#09B600',
         'stroke_opacity': 1.0,
         'stroke_weight': 3,
-        'path': waypoints
+        'path': safest
     }
 
     plinemap = Map(

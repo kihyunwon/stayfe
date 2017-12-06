@@ -48,12 +48,13 @@ def compute_path(src, dst):
 
     path = googleDirection(src, dst)
     p = path[0]
-    path = decode_polyline(p)
+    shortest_path = decode_polyline(p)
+
     waypoints = googleDirection(src, dst, out)
     w = waypoints[0]
-    waypoints = decode_polyline(w)
+    safest_path = decode_polyline(w)
     
-    return path, waypoints
+    return shortest_path, safest_path
 
 if __name__ == '__main__':
     print(compute_path("Hillegaas Avenue, Berkeley, CA", "Soda Hall, Berkeley, CA"))
