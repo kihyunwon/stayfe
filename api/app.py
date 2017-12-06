@@ -21,6 +21,7 @@ pts = np.asarray(list(zip(full["Lat"], full["Lon"])))
 
 
 @app.route('/')
+@app.route("/pathing", methods=["GET"])
 def hello():
     mymap = Map(
         identifier="plinemap",
@@ -30,8 +31,12 @@ def hello():
     )
     return render_template("index.html", plinemap=mymap)
 
-@app.route("/pathing", methods=['GET', 'POST'])
+@app.route("/pathing", methods=['POST'])
 def pathing():
+    print(request.form["start"] + "a")
+    if request.form["start"] == "":
+        return render_template("index.html", plinemap=mymap)
+
     start = request.form["start"]
     dest = request.form["dest"]
     path, waypoint = compute_path(start, dest) #List of tuples of (longitudes, lats)
