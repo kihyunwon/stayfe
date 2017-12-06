@@ -8,7 +8,15 @@ gmaps = googlemaps.Client(key='AIzaSyDCXWvoPjy1rtQVJ5AqQBC2y8tGQQwOnas')
 
 
 def decode_polyline(dr):
-    return polyline.decode(dr['overview_polyline']['points'])
+    path = polyline.decode(dr['overview_polyline']['points'])
+    waypoints = []
+    for leg in dr['legs']:
+        for point in leg['steps']:
+            start = point['start_location']
+            end = point['end_location']
+            waypoints.append((start['lat'], start['lng']))
+            waypoints.append((end['lat'], end['lng']))
+    return path, waypoints
 
 def geocode(addr):
     res = gmaps.geocode(addr)[0]['geometry']['location']
@@ -47,7 +55,8 @@ def googleDirection(src, dst):
 def compute_path(src, dst):
     directions = googleDirection(src, dst)
     dr = directions[0]
-    return decode_polyline(dr)
+    path, waypoints = decode_polyline(dr)
+    return path, waypoints
 
 if __name__ == '__main__':
     print(compute_path("Hillegaas Avenue, Berkeley, CA", "Soda Hall, Berkeley, CA"))

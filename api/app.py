@@ -33,7 +33,7 @@ def hello():
 def pathing():
     start = request.form["start"]
     dest = request.form["dest"]
-    path = compute_path(start, dest) #List of tuples of (longitudes, lats)
+    path, waypoints = compute_path(start, dest) #List of tuples of (longitudes, lats)
 
     points = []
     for point in path:
