@@ -53,7 +53,7 @@ def compute_path(src, dst):
     waypoints = googleDirection(src, dst, out)
     w = waypoints[0]
     safest_path = decode_polyline(w)
-    
+
     return shortest_path, safest_path
 
 if __name__ == '__main__':
