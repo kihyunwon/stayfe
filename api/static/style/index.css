@@ -1,0 +1,18 @@
+body {
+	margin: 0;
+	padding: 0;
+	font-family: arial;
+}
+
+#fullpage {
+	height: 100vh;
+}
+
+#main-map{ 
+	height:80%;
+	width:80%;
+	top:0;
+	left:0;
+	position:absolute;
+	z-index:200; 
+}
