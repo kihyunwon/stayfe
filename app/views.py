@@ -13,67 +13,70 @@ GoogleMaps(app)
 full = pd.read_csv("app/static/data/light_full_classified.csv")
 pts = np.asarray(list(zip(full["Lat"], full["Lon"])))
 
-
-@app.route('/')
-@app.route("/pathing", methods=["GET"])
-def hello():
-    mymap = Map(
+mymap = Map(
         identifier="plinemap",
         style = "height:90%;width:100%;",
         lat=37.871853,
         lng=-122.258423,
     )
+
+@app.route('/')
+@app.route("/pathing", methods=["GET"])
+def hello():
+    
     return render_template("index.html", plinemap=mymap)
 
 @app.route("/pathing", methods=['POST'])
 def pathing():
-    if request.form["start"] == "":
+    try:
+        if request.form["start"] == "":
+            return render_template("index.html", plinemap=mymap)
+
+        start = request.form["start"]
+        dest = request.form["dest"]
+        shortest_path, safest_path, crimes = compute_path(start, dest)
+
+        crimes = list_to_tuple(crimes)
+        shortest = latlon_dict_list(shortest_path)
+        safest = latlon_dict_list(safest_path)
+
+        pline_short = {
+            'stroke_color': '#B62F00',
+            'stroke_opacity': 0.7,
+            'stroke_weight': 3,
+            'path': shortest
+        }
+
+        pline_safe = {
+            'stroke_color': '#09B600',
+            'stroke_opacity': .9,
+            'stroke_weight': 3,
+            'path': safest
+        }
+
+        if "marker" in request.form:
+            plinemap = Map(
+                identifier="plinemap",
+                varname="plinemap",
+                lat=37.871853,
+                lng=-122.258423,
+                style = "height:90%;width:100%;",
+                markers = {"//labs.google.com/ridefinder/images/mm_20_gray.png":crimes},
+                polylines=[pline_safe, pline_short]
+            )
+        else:
+            plinemap = Map(
+                identifier="plinemap",
+                varname="plinemap",
+                lat=37.871853,
+                lng=-122.258423,
+                style = "height:90%;width:100%;",
+                polylines=[pline_safe, pline_short]
+            )
+
+        return render_template("index.html", plinemap=plinemap)
+    except:
         return render_template("index.html", plinemap=mymap)
-
-    start = request.form["start"]
-    dest = request.form["dest"]
-    shortest_path, safest_path, crimes = compute_path(start, dest)
-
-    crimes = list_to_tuple(crimes)
-    shortest = latlon_dict_list(shortest_path)
-    safest = latlon_dict_list(safest_path)
-
-    pline_short = {
-        'stroke_color': '#B62F00',
-        'stroke_opacity': 0.7,
-        'stroke_weight': 3,
-        'path': shortest
-    }
-
-    pline_safe = {
-        'stroke_color': '#09B600',
-        'stroke_opacity': .9,
-        'stroke_weight': 3,
-        'path': safest
-    }
-
-    if "marker" in request.form:
-        plinemap = Map(
-            identifier="plinemap",
-            varname="plinemap",
-            lat=37.871853,
-            lng=-122.258423,
-            style = "height:90%;width:100%;",
-            markers = {"//labs.google.com/ridefinder/images/mm_20_gray.png":crimes},
-            polylines=[pline_safe, pline_short]
-        )
-    else:
-        plinemap = Map(
-            identifier="plinemap",
-            varname="plinemap",
-            lat=37.871853,
-            lng=-122.258423,
-            style = "height:90%;width:100%;",
-            polylines=[pline_safe, pline_short]
-        )
-
-    return render_template("index.html", plinemap=plinemap)
-
 # e.g. host:port/crimes?src=-122.445,37.74&dst=-122.42,37.715
 @app.route('/crimes', methods=['GET'])
 def serve_crime():
