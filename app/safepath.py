@@ -126,7 +126,7 @@ def get_waypoints(A,B):
 
             while (c < 20 and get_weights(start.reshape((2,1,1)), coords, widths, amps) > threshold * 0.5):
                 c += 1
-                start -= dU*5e-8
+                start -= dU*1e-8
                 dU = get_deriv(start.reshape((2,1)), coords.squeeze(), widths.squeeze(), amps.squeeze())
             
             u = float(s)/10
