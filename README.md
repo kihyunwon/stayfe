@@ -1,7 +1,7 @@
 Stayfe
 =======
 
-Flask server for computing safest path between two points
+Flask server for computing safest path between two points. Provides a web interface for users as well as an API endpoint for programmers to compute the safest path.
 
 Requirements
 --------------
@@ -13,6 +13,7 @@ Requirements
 - numpy
 - pandas
 - scikit-learn
+- flask-googlemaps
 
 
 Endpoints
