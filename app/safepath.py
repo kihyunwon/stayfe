@@ -121,7 +121,7 @@ def get_waypoints(A,B):
             s = int(np.mean([i for i, x in enumerate(label) if x == n]))
             start = arr[:,s,0] # shape (2,)
             dU = get_deriv(start.reshape((2,1)), coords.squeeze(), widths.squeeze(), amps.squeeze())
-            start -= dU*5e-7
+            start -= dU*1e-9
             c = 0
 
             while (c < 20 and get_weights(start.reshape((2,1,1)), coords, widths, amps) > threshold * 0.5):
