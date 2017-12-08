@@ -1,0 +1,8 @@
+flask
+pandas
+googlemaps
+numpy
+scikit-learn
+flask-googlemaps
+polyline
+scikit-image
