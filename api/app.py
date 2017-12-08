@@ -33,13 +33,13 @@ def hello():
 
 @app.route("/pathing", methods=['POST'])
 def pathing():
-    print(request.form["start"] + "a")
     if request.form["start"] == "":
         return render_template("index.html", plinemap=mymap)
 
     start = request.form["start"]
     dest = request.form["dest"]
-    shortest_path, safest_path = compute_path(start, dest) #List of tuples of (longitudes, lats)
+    # list of (lat, lng)
+    shortest_path, safest_path, crimes = compute_path(start, dest)
 
     shortest = []
     safest = []

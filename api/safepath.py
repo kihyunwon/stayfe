@@ -37,12 +37,12 @@ def get_crime_data(bbox):
     	else:
         	return 0.001
     
-    coords = np.array(query[['Lon', 'Lat']])
-    coords = np.expand_dims(coords.T, axis=1)
+    crimes = np.asarray(query[['Lon', 'Lat']])
+    coords = np.expand_dims(crimes.T, axis=1)
     amps = np.exp(-query['secsago']/1e8).values.reshape((1, coords.shape[-1]))
     widths = np.array([get_width(cat) for cat in query['Weapon']]).reshape(1,1, coords.shape[-1])
-    
-    return coords, amps, widths
+
+    return crimes, coords, amps, widths
 
 
 def get_weights(arr, coords, widths, amps, midpoint=False):
@@ -98,7 +98,7 @@ def get_curve(waypoints):
 
 def get_waypoints(A,B):
     bbox = get_bbox(A,B)
-    coords, amps, widths = get_crime_data(bbox)
+    crimes, coords, amps, widths = get_crime_data(bbox)
     pts = 0
     safe = False
     threshold = 0.02
@@ -137,7 +137,7 @@ def get_waypoints(A,B):
         if it > 4:
             break
 
-    return waypoints
+    return waypoints, crimes
     
     
 if __name__ == "__main__":

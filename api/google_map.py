@@ -38,7 +38,7 @@ def compute_path(src, dst):
 
     ss = (src_addr[1], src_addr[0])
     dd = (dst_addr[1], dst_addr[0])
-    ways = get_waypoints(ss, dd)
+    ways, crimes = get_waypoints(ss, dd)
     
     out = []
     sort_keys = sorted(ways.keys())
@@ -54,7 +54,7 @@ def compute_path(src, dst):
     w = waypoints[0]
     safest_path = decode_polyline(w)
 
-    return shortest_path, safest_path
+    return shortest_path, safest_path, crimes
 
 if __name__ == '__main__':
     print(compute_path("Hillegaas Avenue, Berkeley, CA", "Soda Hall, Berkeley, CA"))
