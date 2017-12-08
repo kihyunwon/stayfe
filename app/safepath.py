@@ -4,7 +4,7 @@ from skimage import measure
 
 
 # load the data onto memory
-df = pd.read_csv("../data/light_full_classified.csv")
+df = pd.read_csv("app/static/data/light_full_classified.csv")
 
 
 def get_bbox(A,B):

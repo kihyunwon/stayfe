@@ -2,7 +2,7 @@ import googlemaps
 import polyline
 from datetime import datetime
 
-from safepath import get_waypoints
+from .safepath import get_waypoints
 
 gmaps = googlemaps.Client(key='AIzaSyDCXWvoPjy1rtQVJ5AqQBC2y8tGQQwOnas')
 

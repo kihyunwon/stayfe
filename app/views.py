@@ -1,22 +1,16 @@
 import random
 import numpy as np
 import pandas as pd
-from flask import Flask
-from flask import request, jsonify
-from flask import render_template, redirect, flash
-from flask_googlemaps import GoogleMaps
-from flask_googlemaps import Map
+from flask import render_template, jsonify, redirect, flash, request
+from flask_googlemaps import GoogleMaps, Map, icons
+from .google_map import compute_path
+from app import app
 
-app = Flask(__name__)
 app.config['GOOGLEMAPS_KEY'] = "AIzaSyC027Msv7wEU6fsCTFBJoQy52GDraHGCqw"
-
 GoogleMaps(app)
 
-from google_map import compute_path
-
-
 # load the data onto memory
-full = pd.read_csv("../data/light_full_classified.csv")
+full = pd.read_csv("app/static/data/light_full_classified.csv")
 pts = np.asarray(list(zip(full["Lat"], full["Lon"])))
 
 
@@ -33,35 +27,29 @@ def hello():
 
 @app.route("/pathing", methods=['POST'])
 def pathing():
+
     if request.form["start"] == "":
         return render_template("index.html", plinemap=mymap)
 
     start = request.form["start"]
     dest = request.form["dest"]
-    # list of (lat, lng)
     shortest_path, safest_path, crimes = compute_path(start, dest)
 
-    shortest = []
-    safest = []
+    crimes = list_to_tuple(crimes)
+    print(crimes)    
+    shortest = latlon_dict_list(shortest_path)
+    safest = latlon_dict_list(safest_path)
 
-    for point in shortest_path:
-        point_dict = {"lat":point[0], "lng":point[1]}
-        shortest.append(point_dict)
-
-    for point in safest_path:
-        point_dict = {"lat":point[0], "lng":point[1]}
-        safest.append(point_dict)
-
-    polyline_points = {
+    pline_short = {
         'stroke_color': '#B62F00',
-        'stroke_opacity': 1.0,
+        'stroke_opacity': 0.7,
         'stroke_weight': 3,
         'path': shortest
     }
 
-    polyline_waypath = {
+    pline_safe = {
         'stroke_color': '#09B600',
-        'stroke_opacity': 1.0,
+        'stroke_opacity': .9,
         'stroke_weight': 3,
         'path': safest
     }
@@ -72,7 +60,8 @@ def pathing():
         lat=37.871853,
         lng=-122.258423,
         style = "height:90%;width:100%;",
-        polylines=[polyline_points, polyline_waypath]
+        markers = crimes,
+        polylines=[pline_safe, pline_short]
     )
 
     return render_template("index.html", plinemap=plinemap)
@@ -105,6 +94,19 @@ def serve_path():
     
     return jsonify(path) 
 
+
+def latlon_dict_list(lst):
+    result = []
+    for point in lst:
+        point_dict = {"lat":point[0], "lng":point[1]}
+        result.append(point_dict)
+    return result
+
+def list_to_tuple(lst):
+    result = []
+    for point in lst:
+        result.append((point[1], point[0]))
+    return result
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
