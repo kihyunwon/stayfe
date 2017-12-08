@@ -27,7 +27,6 @@ def hello():
 
 @app.route("/pathing", methods=['POST'])
 def pathing():
-
     if request.form["start"] == "":
         return render_template("index.html", plinemap=mymap)
 
@@ -36,7 +35,6 @@ def pathing():
     shortest_path, safest_path, crimes = compute_path(start, dest)
 
     crimes = list_to_tuple(crimes)
-    print(crimes)    
     shortest = latlon_dict_list(shortest_path)
     safest = latlon_dict_list(safest_path)
 
@@ -54,15 +52,25 @@ def pathing():
         'path': safest
     }
 
-    plinemap = Map(
-        identifier="plinemap",
-        varname="plinemap",
-        lat=37.871853,
-        lng=-122.258423,
-        style = "height:90%;width:100%;",
-        markers = crimes,
-        polylines=[pline_safe, pline_short]
-    )
+    if "marker" in request.form:
+        plinemap = Map(
+            identifier="plinemap",
+            varname="plinemap",
+            lat=37.871853,
+            lng=-122.258423,
+            style = "height:90%;width:100%;",
+            markers = {"//labs.google.com/ridefinder/images/mm_20_gray.png":crimes},
+            polylines=[pline_safe, pline_short]
+        )
+    else:
+        plinemap = Map(
+            identifier="plinemap",
+            varname="plinemap",
+            lat=37.871853,
+            lng=-122.258423,
+            style = "height:90%;width:100%;",
+            polylines=[pline_safe, pline_short]
+        )
 
     return render_template("index.html", plinemap=plinemap)
 

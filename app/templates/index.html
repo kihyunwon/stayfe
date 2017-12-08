@@ -10,7 +10,8 @@
 	<form action="{{ url_for('pathing') }}" id="submit-form" method="post">
 	    <input type="text" name="start", placeholder="Start">
 	    <input type="text" name="dest", placeholder="Destination">
-	    <input type="submit", value="Get Path">
+	    <input type="checkbox" name="marker" value="true">
+	    <input type="submit" value="Get Path">
 	</form>
 </body>
 </html>

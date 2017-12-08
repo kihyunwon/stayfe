@@ -21,7 +21,7 @@ Endpoints
 Run the server:
 
 ```
-python app.py
+python run.py
 ```
 
 Get crime data between two points:
